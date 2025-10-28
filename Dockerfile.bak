@@ -1,0 +1,46 @@
+# syntax=docker/dockerfile:1
+FROM ubuntu:24.04
+
+# သုံးဖို့ shell သှတ်မှတ်
+SHELL ["/bin/bash", "-c"]
+
+# အလုပ်လုပ်တဲ့နေရာ
+WORKDIR /root
+
+# file/folder ကို Docker Image ထဲ ကူးထည့်မယ်
+COPY *.py .
+COPY *.sh .
+COPY blblblweb ./blblblweb/
+
+# လိုအပ်တဲ့ tool package lib module download မယ်
+RUN apt-get update
+RUN apt-get install openjdk-21-jdk wget zip unzip python3 python3-venv python3-pip -y
+RUN python3 -m venv .venv
+RUN .venv/bin/pip install -U pip 'fastapi[standard]' pyjwt python-multipart
+
+# SDK Directory ဆောက်မယ်
+RUN mkdir -p Android/Sdk/cmdline-tools/latest
+
+# cmdline-tools zip down မယ်
+RUN wget -O cmd.zip "https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip" 
+
+# cmdline-tools extract ပြီး သူ့ Directory ထဲ ရွေ့မယ်
+RUN unzip cmd.zip && mv cmdline-tools/* Android/Sdk/cmdline-tools/latest/ && rm -rf cmdline-tools cmd.zip
+
+
+# Environment Variable တွေကို .bashrc file ထဲထည့်မယ်
+
+# ဒါက Project build တဲ့အခါ Android SDK Home လိုတယ်
+RUN echo "export ANDROID_HOME=\$HOME/Android/Sdk" >> .bashrc
+
+# ဒါက cmdline-tools တွေကို terminal မှာ direct ခေါ်သုံးလို့ရအောင် PATH ထဲထည့်ထား
+RUN echo "export PATH=\$PATH:\$ANDROID_HOME/cmdline-tools/latest/bin" >> .bashrc
+
+# ပျောက်နေတဲ့ Executable permission ပြန်ပေးမယ်
+RUN chmod +x /root/Android/Sdk/cmdline-tools/latest/bin/* /root/blblblweb/gradlew
+
+# Container အပြင်ကို port 8000 ဖွင့်ဖို့ ပြတာ
+EXPOSE 8000
+
+# Container Run/Start တာနဲ့ API script တန်းrun အောင်လို့။ ဒီဟာမထည့်ရင် Container run/start တာနဲ့ container terminal ထဲရောက်မှာ
+CMD ["/bin/bash", "/root/run.sh"]

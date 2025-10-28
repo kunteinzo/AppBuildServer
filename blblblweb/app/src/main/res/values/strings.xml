@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">blblblweb</string>
+    <string name="Shop_ID">${Shop_Id}</string>
+</resources>
