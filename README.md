@@ -32,18 +32,18 @@ docker builder prune
 
 ## API 
 
-- End point: `/cmd`
-  Method: `POST`
-  Content-Type: `application/json`
-  Body: `{"cmd": ["echo", "hello"]}`
-  Response: `{"output": "success output", "error": "Error output"}`
+- End point: `/cmd`  
+  Method: `POST`  
+  Content-Type: `application/json`  
+  Body: `{"cmd": ["echo", "hello"]}`  
+  Response: `{"output": "success output", "error": "Error output"}`  
   Usage: To test execute command from API
 
-- End point: `/build`
-  Method: `GET`
+- End point: `/build`  
+  Method: `GET`  
   Response: `{"output": "success output", "error": "Error output"}`
 
-- End point: `/getApp`
-  Method: `GET`
+- End point: `/getApp`  
+  Method: `GET`  
   Response: Build Apk File if build success else "App haven't build yet"
 
